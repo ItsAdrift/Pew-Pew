@@ -12,9 +12,9 @@ public class DamageEffectController : MonoBehaviour
     [Header("Effect")]
     [SerializeField] Color colour1;
     [SerializeField] Color colour2;
-    [SerializeField] float startLerpTime = 2.5f;
+    [SerializeField] float startLerpTime = 5f;
     [SerializeField] float endLerpTime = 1f;
-    [SerializeField] float timeToEffectClear = 5f;
+    [SerializeField] float timeToEffectClear = 7f;
 
     PostProcessVolume volume;
     Vignette vignette;
@@ -23,7 +23,7 @@ public class DamageEffectController : MonoBehaviour
     bool isPlaying = false;
     public int damageEffect = DAMAGE_EFFECT_SINGLE;
 
-    float lastHit;
+    float timeToClear;
 
     void Start()
     {
@@ -46,13 +46,10 @@ public class DamageEffectController : MonoBehaviour
 
                 float t = startLerpTime * Time.deltaTime;
 
-                
-
-                if (Time.time > (lastHit + timeToEffectClear))
+                if (Time.time > timeToClear)
                 {
-                    // We need to clear the effect
-
                     t = endLerpTime * Time.deltaTime;
+                    // We need to clear the effect
                     if (vignette.color == colour1)
                     {
                         // has returned to normal, clear
@@ -60,6 +57,7 @@ public class DamageEffectController : MonoBehaviour
                         return;
                     }
 
+                    // Normal Settings
                     vignette.intensity.Override(Mathf.Lerp(vignette.intensity, 0.315f, t));
                     vignette.smoothness.Override(Mathf.Lerp(vignette.smoothness, 0f, t));
                     vignette.color.Override(Color.Lerp(vignette.color, colour1, t));
@@ -67,22 +65,14 @@ public class DamageEffectController : MonoBehaviour
                     return;
                 }
 
-                if (vignette.color == colour1)
-                {
-                    targetColour = colour2;
-                }
-                else if (vignette.color == colour2)
-                {
-                    targetColour = colour1;
-                }
-
-
+                // Damaged Settings - May want to make these a bit more obvious
                 vignette.intensity.Override(Mathf.Lerp(vignette.intensity, 0.45f, t));
                 vignette.smoothness.Override(Mathf.Lerp(vignette.smoothness, 0.18f, t));
-                vignette.color.Override(Color.Lerp(vignette.color, targetColour, t));
+                vignette.color.Override(Color.Lerp(vignette.color, colour2, t));
             }
         } else
         {
+            // Normal Settings
             vignette.intensity.Override(0.315f);
             vignette.smoothness.Override(0f);
             vignette.color.Override(colour1);
@@ -102,7 +92,7 @@ public class DamageEffectController : MonoBehaviour
 
     public void AddHit()
     {
-        lastHit = Time.time;
+        timeToClear = Time.time + timeToEffectClear;
     }
 
     public void Clear()

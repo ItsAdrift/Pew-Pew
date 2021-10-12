@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             Destroy(ui);
             Destroy(GetComponent<GameSettingsLink>());
             Destroy(notificationManager);
+            Destroy(damageEffectController);
             //Destroy(playerManager.settings);
             return;
         }
@@ -83,11 +84,6 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (!PV.IsMine)
         {
             return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            TakeDamage(10f, "developer");
         }
 
         if (damageEffectController.damageEffect == DamageEffectController.DAMAGE_EFFECT_PULSE && currentHealth > 0.3 * maxHealth)

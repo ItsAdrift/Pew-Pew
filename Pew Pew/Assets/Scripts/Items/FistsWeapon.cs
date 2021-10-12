@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using System.IO;
 
-public class StandardGun : Gun
+public class FistsWeapon : Item
 {
     [SerializeField] Camera cam;
-   
-    float nextTimeToFire = 0f;
+
+    float nextTimeToAttack = 0f;
 
     PhotonView PV;
     NotificationManager notificationManager;
+    public Animator animator;
 
     void Awake()
     {
@@ -21,25 +21,25 @@ public class StandardGun : Gun
 
     public override void Use()
     {
-        GunInfo gunInfo = (GunInfo) itemInfo;
-        if (nextTimeToFire == 0f || Time.time >= nextTimeToFire)
+        MeleeInfo meleeInfo = (MeleeInfo)itemInfo;
+        if (nextTimeToAttack == 0f || Time.time >= nextTimeToAttack)
         {
-            Shoot();
-            nextTimeToFire = Time.time + (1f / gunInfo.fireRate);
+            Attack();
+            nextTimeToAttack = Time.time + (1f / meleeInfo.attackRate);
         }
-        
+
     }
 
-    public void Shoot()
+    public void Attack()
     {
-        GunInfo gunInfo = (GunInfo) itemInfo;
+        MeleeInfo meleeInfo = (MeleeInfo)itemInfo;
 
-        particles.Play();
-        PV.RPC("RPC_PlaySoundEffect", RpcTarget.All, gunInfo.itemName);
+        animator.Play("Punch");
+        
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, gunInfo.range))
+        if (Physics.Raycast(ray, out hit, meleeInfo.range))
         {
             if (hit.collider.gameObject.GetComponentInParent<IDamageable>() != null)
             {
@@ -49,7 +49,7 @@ public class StandardGun : Gun
 
                 string hitNickName = hitView.Owner.NickName;
 
-                bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
+                bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(meleeInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
                     string message = hitNickName + " was killed by " + PV.Owner.NickName;
@@ -57,10 +57,7 @@ public class StandardGun : Gun
                     notificationManager.SendNotification("You killed " + hitNickName);
                 }
             }
-           
 
-            PV.RPC("RPC_PlayImpactEffect", RpcTarget.All, hit.point, hit.normal, gunInfo.itemName);
-            
         }
     }
 }
