@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] Image healthBarImage;
     [SerializeField] GameObject deathUI;
     [SerializeField] TMP_Text deathMessage;
+    [SerializeField] GameObject scoreboard;
 
     [Header("Other")]
     [SerializeField] ItemManager itemManager;
@@ -89,6 +90,14 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (!PV.IsMine)
         {
             return;
+        }
+
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            scoreboard.SetActive(true);
+        } else if (scoreboard.activeSelf)
+        {
+            scoreboard.SetActive(false);
         }
 
         if (damageEffectController.damageEffect == DamageEffectController.DAMAGE_EFFECT_PULSE && currentHealth > 0.3 * maxHealth)
@@ -310,7 +319,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             _killer = "You";
         }
 
-        notificationManager.SendNotification(message.Replace("<KILLED>", _killed).Replace("<KILLER>", _killer));
+        notificationManager.SendNotification(_message.Replace("<KILLED>", _killed).Replace("<KILLER>", _killer));
     }
 
     void PlayerDied(string message, string killed, string killer)

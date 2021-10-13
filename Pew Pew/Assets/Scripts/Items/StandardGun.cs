@@ -11,11 +11,13 @@ public class StandardGun : Gun
     float nextTimeToFire = 0f;
 
     PhotonView PV;
+    PlayerController playerController;
     NotificationManager notificationManager;
 
     void Awake()
     {
         PV = transform.root.GetComponent<PhotonView>();
+        playerController = PV.gameObject.GetComponent<PlayerController>();
         notificationManager = PV.gameObject.GetComponent<NotificationManager>();
     }
 
@@ -52,6 +54,7 @@ public class StandardGun : Gun
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
+                    playerController.playerManager.AddKill();
                     // Moved to PlayerManager
 
                     //string message = hitNickName + " was killed by " + PV.Owner.NickName;

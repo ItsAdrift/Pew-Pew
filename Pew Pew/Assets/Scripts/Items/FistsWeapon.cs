@@ -10,13 +10,15 @@ public class FistsWeapon : Item
     float nextTimeToAttack = 0f;
 
     PhotonView PV;
+    PlayerController playerController;
     NotificationManager notificationManager;
     public Animator animator;
 
     void Awake()
     {
         PV = transform.root.GetComponent<PhotonView>();
-        notificationManager = transform.root.GetComponentInChildren<NotificationManager>();
+        playerController = PV.gameObject.GetComponent<PlayerController>();
+        notificationManager = PV.gameObject.GetComponent<NotificationManager>();
     }
 
     public override void Use()
@@ -52,9 +54,7 @@ public class FistsWeapon : Item
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(meleeInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
-                    string message = hitNickName + " was killed by " + PV.Owner.NickName;
-                    notificationManager.SendDelayedGlobalNotification(message, false, 0.1f);
-                    notificationManager.SendNotification("You killed " + hitNickName);
+                    playerController.playerManager.AddKill();
                 }
             }
 

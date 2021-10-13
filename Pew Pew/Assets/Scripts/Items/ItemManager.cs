@@ -132,7 +132,9 @@ public class ItemManager : MonoBehaviourPunCallbacks
     {
         if (!PV.IsMine && targetPlayer == PV.Owner)
         {
-            SelectItem((int) changedProps["itemIndex"]);
+            if (changedProps.ContainsKey("itemIndex"))
+                SelectItem((int)changedProps["itemIndex"]);
+
         }
     }
 
