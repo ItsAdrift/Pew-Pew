@@ -18,10 +18,7 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
     public void Awake()
     {
         Instance = this;
-    }
 
-    public void Start()
-    {
         foreach (Player player in PhotonNetwork.PlayerList)
         {
             Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
@@ -29,15 +26,14 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
             scoreboard.kills.text = "0";
             scoreboard.deaths.text = "0";
 
-            scoreboard.userID = player.UserId;
-
-            scoreboardItems.Add(player.UserId, scoreboard);
+            scoreboardItems.Add(player.NickName, scoreboard);
         }
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) {
+        Debug.Log("Updating for " + target.NickName);
         Scoreboard scoreboard;
-        scoreboardItems.TryGetValue(target.UserId, out scoreboard);
+        scoreboardItems.TryGetValue(target.NickName, out scoreboard);
 
         scoreboard.username.text = target.NickName;
         if (changedProps.ContainsKey("kills"))
@@ -49,6 +45,9 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
             scoreboard.deaths.text = "" + (int)changedProps["deaths"];
         }
 
+        scoreboardItems.Remove(target.NickName);
+        scoreboardItems.Add(target.NickName, scoreboard);
+
         OrderScoreboard();
     }
 
@@ -59,8 +58,6 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
         scoreboard.kills.text = "0";
         scoreboard.deaths.text = "0";
 
-        scoreboard.userID = newPlayer.UserId;
-
         scoreboardItems.Add(newPlayer.UserId, scoreboard);
 
         OrderScoreboard();
@@ -68,20 +65,11 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
 
     public void OrderScoreboard()
     {
-        List<Scoreboard> orderedList = scoreboardItems.Values.ToList().OrderByDescending(o => o.kills).ToList();
-        foreach (Scoreboard sb in scoreboardItems.Values.ToList())
+        List<Scoreboard> orderedList = scoreboardItems.Values.ToList().OrderByDescending(o => int.Parse(o.kills.text)).ToList();
+        
+        for (int i = 0; i < orderedList.Count; i++)
         {
-            Destroy(sb.gameObject);
-        }
-        scoreboardItems.Clear();
-        foreach (Scoreboard sb in orderedList)
-        {
-            Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
-            scoreboard.username.text = sb.username.text;
-            scoreboard.kills.text = sb.kills.text;
-            scoreboard.deaths.text = sb.deaths.text;
-
-            scoreboardItems.Add(scoreboard.userID, scoreboard);
+            orderedList[i].gameObject.transform.SetSiblingIndex(i);
         }
     }
 

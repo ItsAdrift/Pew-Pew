@@ -8,6 +8,4 @@ public class Scoreboard : MonoBehaviour
     public TMP_Text username;
     public TMP_Text kills;
     public TMP_Text deaths;
-
-    [HideInInspector] public string userID;
 }

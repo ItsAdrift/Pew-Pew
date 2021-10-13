@@ -92,13 +92,13 @@ public class PlayerController : MonoBehaviour, IDamageable
             return;
         }
 
-        if (Input.GetKey(KeyCode.Tab))
+        /*if (Input.GetKey(KeyCode.Tab))
         {
             scoreboard.SetActive(true);
         } else if (scoreboard.activeSelf)
         {
             scoreboard.SetActive(false);
-        }
+        }*/
 
         if (damageEffectController.damageEffect == DamageEffectController.DAMAGE_EFFECT_PULSE && currentHealth > 0.3 * maxHealth)
         {

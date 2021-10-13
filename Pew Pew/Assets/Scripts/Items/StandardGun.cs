@@ -52,8 +52,10 @@ public class StandardGun : Gun
                 string hitNickName = hitView.Owner.NickName;
 
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
+                Debug.Log("Is Dead: " + isDead);
                 if (isDead)
                 {
+                    Debug.Log("Adding Kill For: " + PV.Owner.NickName);
                     playerController.playerManager.AddKill();
                     // Moved to PlayerManager
 

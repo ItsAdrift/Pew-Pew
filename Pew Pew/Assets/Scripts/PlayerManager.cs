@@ -8,6 +8,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayerManager : MonoBehaviour
 {
+    private int kills = 0;
+    private int deaths = 0;
+
     PhotonView PV;
 
     GameObject controller;
@@ -59,20 +62,19 @@ public class PlayerManager : MonoBehaviour
             NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> was killed by <KILLER>", PV.Owner.NickName, damager);
         }
 
-        int deathScore = (int)PhotonNetwork.LocalPlayer.CustomProperties["deaths"];
-        deathScore++;
+        deaths++;
         Hashtable hash = new Hashtable();
-        hash.Add("deaths", deathScore);
+        hash.Add("deaths", deaths);
+        hash.Add("kills", kills);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-
     }
 
     public void AddKill()
     {
-        int killScore = (int)PhotonNetwork.LocalPlayer.CustomProperties["kills"];
-        killScore++;
+        kills++;
         Hashtable hash = new Hashtable();
-        hash.Add("kills", killScore);
+        hash.Add("kills", kills);
+        hash.Add("deaths", deaths);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
 }
