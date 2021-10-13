@@ -149,10 +149,10 @@ MonoBehaviour:
   itemPosition: {fileID: 8179545595534906408}
   items:
   - {fileID: 8134483539765256027}
+  - {fileID: 2969375592026183505}
   - {fileID: 7928128054066980645}
   - {fileID: 8958576093027692434}
-  - {fileID: 1343993597587558600}
-  selectedItem: {fileID: 1343993597587558600}
+  selectedItem: {fileID: 0}
   selectedItemIndex: 0
   selectedItemGameObject: {fileID: 0}
   playerController: {fileID: 67318200751577045}
@@ -1061,13 +1061,14 @@ GameObject:
   - component: {fileID: 2812051101626358920}
   - component: {fileID: 5607741068119989514}
   - component: {fileID: 1099607215667249740}
+  - component: {fileID: 2969375592026183505}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Fists (Punching)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3248040002873753087
 Transform:
   m_ObjectHideFlags: 0
@@ -1079,8 +1080,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
-  m_Father: {fileID: 4320335391367932861}
-  m_RootOrder: 0
+  m_Father: {fileID: 8179545595534906408}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 7.64, y: -2.26, z: 19.62}
 --- !u!33 &2812051101626358920
 MeshFilter:
@@ -1151,6 +1152,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2969375592026183505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2213604772883838398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98d83be36c2e6704db77d70262f51121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemInfo: {fileID: 11400000, guid: cbf86b31dc93b6b4caab8c764d4b2263, type: 2}
+  itemGameObject: {fileID: 2213604772883838398}
+  cam: {fileID: 67318201543080189}
+  animator: {fileID: 1099607215667249740}
 --- !u!1 &2293931777047941193
 GameObject:
   m_ObjectHideFlags: 0
@@ -3073,7 +3090,7 @@ MonoBehaviour:
     m_Bottom: 10
   m_ChildAlignment: 0
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
@@ -3353,9 +3370,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8134483539765255944}
+  - {fileID: 3248040002873753087}
   - {fileID: 7928128054066980676}
   - {fileID: 8958576093027692537}
-  - {fileID: 4320335391367932861}
   m_Father: {fileID: 778263348987119962}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3707,7 +3724,7 @@ Transform:
   - {fileID: 7928128054066980673}
   - {fileID: 7928128054066980534}
   m_Father: {fileID: 8179545595534906408}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7928128054066980718
 MeshFilter:
@@ -24060,54 +24077,6 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
---- !u!1 &8321874131508574363
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4320335391367932861}
-  - component: {fileID: 1343993597587558600}
-  m_Layer: 0
-  m_Name: Fists (Punching)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &4320335391367932861
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8321874131508574363}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 3248040002873753087}
-  m_Father: {fileID: 8179545595534906408}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1343993597587558600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8321874131508574363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98d83be36c2e6704db77d70262f51121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemInfo: {fileID: 11400000, guid: cbf86b31dc93b6b4caab8c764d4b2263, type: 2}
-  itemGameObject: {fileID: 8321874131508574363}
-  cam: {fileID: 67318201543080189}
-  animator: {fileID: 1099607215667249740}
 --- !u!1 &8363736019867984995
 GameObject:
   m_ObjectHideFlags: 0
@@ -24371,7 +24340,7 @@ Transform:
   - {fileID: 8958576093027692513}
   - {fileID: 8958576093027692541}
   m_Father: {fileID: 8179545595534906408}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8958576093027692506
 MeshFilter:

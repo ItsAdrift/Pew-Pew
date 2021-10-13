@@ -122,7 +122,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         MenuManager.instance.OpenMenu("title");
     }
-
+    
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         foreach(Transform t in roomListContent)
@@ -141,6 +141,11 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().Setup(newPlayer);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
 }

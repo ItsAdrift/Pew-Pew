@@ -38,7 +38,17 @@ public class PlayerManager : MonoBehaviour
 
         // Display the death message to the new controller & set their settings again
         PlayerController newController = controller.GetComponent<PlayerController>();
-        newController.ShowDeathMessage(damager);
+        //newController.ShowDeathMessage(damager.Replace("void_", "")); Removed this due to suggestions, death messages will now just show up in the top right hand corner
         newController.GetComponent<GameSettingsLink>()?.UpdateSliders();
+        if (damager.StartsWith("void_"))
+        {
+            NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> was killed by <KILLER>", PV.Owner.NickName, damager.Replace("void_", ""));
+        } else if (damager.Equals("The Void"))
+        {
+            NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> fell into the void", PV.Owner.NickName, damager);
+        } else
+        {
+            NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> was killed by <KILLER>", PV.Owner.NickName, damager);
+        }
     }
 }

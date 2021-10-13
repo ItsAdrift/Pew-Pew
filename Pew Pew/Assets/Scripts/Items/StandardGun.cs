@@ -16,7 +16,7 @@ public class StandardGun : Gun
     void Awake()
     {
         PV = transform.root.GetComponent<PhotonView>();
-        notificationManager = transform.root.GetComponentInChildren<NotificationManager>();
+        notificationManager = PV.gameObject.GetComponent<NotificationManager>();
     }
 
     public override void Use()
@@ -52,9 +52,11 @@ public class StandardGun : Gun
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
-                    string message = hitNickName + " was killed by " + PV.Owner.NickName;
-                    notificationManager.SendDelayedGlobalNotification(message, false, 0.1f);
-                    notificationManager.SendNotification("You killed " + hitNickName);
+                    // Moved to PlayerManager
+
+                    //string message = hitNickName + " was killed by " + PV.Owner.NickName;
+                    //notificationManager.SendDelayedGlobalNotification(message, false, 0.1f);
+                    //notificationManager.SendNotification("You killed " + hitNickName);
                 }
             }
            

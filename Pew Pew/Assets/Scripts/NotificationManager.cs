@@ -7,6 +7,13 @@ using UnityEngine;
 
 public class NotificationManager : MonoBehaviour
 {
+    public static NotificationManager Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
     [SerializeField] PhotonView PV;
 
     [SerializeField] Transform notificationManager;
@@ -18,7 +25,7 @@ public class NotificationManager : MonoBehaviour
         //Debug.Log(obj.transform.position);
         //Debug.Log(obj.transform.parent.name); // The object is not spawning as a child of the notificationManager (Vertical Layout Group) object
         obj.GetComponent<Notification>().Setup(message);
-        Destroy(obj, 5f);
+        Destroy(obj, 8f);
     }
 
     public void SendGlobalNotification(string message, bool toSelf)
@@ -44,6 +51,9 @@ public class NotificationManager : MonoBehaviour
         SendGlobalNotification(message, toSelf);
     }
 
-
+    public void SendPlayerDiedMessage(string message, string killed, string killer)
+    {
+        NotificationEvents.PlayerDied(message, killed, killer);
+    }
 
 }

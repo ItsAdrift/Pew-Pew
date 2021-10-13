@@ -41,9 +41,9 @@ public class ItemManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
-            // Scroll Up - Go to the next item in list (increasing)
+            //  Go to the last item in list (decreasing) - Going to the left
 
             if (items.Count > selectedItemIndex + 1)
             {
@@ -54,9 +54,9 @@ public class ItemManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
-            // Scroll Down - Go to the previous item in list (decreasing)
+            // Go to the next item in list (increasing) - Going to the right
 
             if (selectedItemIndex - 1 >= 0)
             {
@@ -66,6 +66,11 @@ public class ItemManager : MonoBehaviourPunCallbacks
             {
                 SelectItem(items.Count -1);
             }
+        }
+
+        if (getNumeralKeycode() != -1 && getNumeralKeycode() != 0)
+        {
+            SelectItem(getNumeralKeycode() - 1);
         }
 
         if (Input.GetMouseButton(0))
@@ -82,7 +87,20 @@ public class ItemManager : MonoBehaviourPunCallbacks
 
     public void SelectItem(int index)
     {
+        if (index >= items.Count)
+        {
+            return;
+        }
+
+
         // Set the current item's gameobject to deactivated
+        if (items[selectedItemIndex].itemGameObject.GetComponent<Animator>() != null)
+        {
+            Animator anim = items[selectedItemIndex].itemGameObject.GetComponent<Animator>();
+            anim.CrossFade("PunchIdle", 0f);
+            anim.Update(0f);
+            anim.Update(0f);
+        }
         items[selectedItemIndex].itemGameObject.SetActive(false);
 
         // Set the new selected item.
@@ -116,6 +134,51 @@ public class ItemManager : MonoBehaviourPunCallbacks
         {
             SelectItem((int) changedProps["itemIndex"]);
         }
+    }
+
+    private int getNumeralKeycode()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            return 0;
+        } else if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            return 1;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            return 2;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            return 3;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            return 4;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            return 5;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            return 6;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            return 7;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            return 8;
+        } else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            return 9; 
+        }
+        else
+
+            return -1;
     }
 
 }

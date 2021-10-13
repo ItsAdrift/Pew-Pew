@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     [Header("Health")]
     public const float maxHealth = 100f;
+    public const float hitCache = 5f;
     private float currentHealth = maxHealth;
 
     [Header("UI")]
@@ -47,6 +48,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] DamageEffectController damageEffectController;
 
     PhotonView PV;
+    string lastHitUser;
+    float lastHitTime;
 
     [HideInInspector] public bool isPaused;
 
@@ -56,11 +59,13 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         playerManager = PhotonView.Find((int) PV.InstantiationData[0]).GetComponent<PlayerManager>();
         NotificationEvents.SendNotificiation += (string message, RpcTarget target) => { SendNotification(message, target); };
+        NotificationEvents.PlayerDied += (string message, string killed, string killer) => { PlayerDied(message, killed, killer);  };
     }
 
     void OnDestroy()
     {
         NotificationEvents.SendNotificiation -= SendNotification;
+        NotificationEvents.PlayerDied -= PlayerDied;
     }
 
     void Start()
@@ -117,7 +122,13 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         if (transform.position.y <= -10f) // Fell into the void
         {
-            Die("The Void");
+            if (lastHitUser != null && Time.time < lastHitTime + hitCache)
+            {
+                Die("void_" + lastHitUser);
+            } else
+            {
+                Die("The Void");
+            }
         }
     }
 
@@ -177,7 +188,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     public bool TakeDamage(float damage, string damager)
     {
         PV.RPC("RPC_TakeDamage", RpcTarget.All, damage, damager);
-        if ((currentHealth - damage) <= 0f)
+        if ((currentHealth -= damage) <= 0f)
         {
             return true;
         }
@@ -189,6 +200,10 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         if (!PV.IsMine)
             return;
+
+        lastHitUser = damager;
+        lastHitTime = Time.time;
+
         currentHealth -= damage;
 
         healthBarImage.fillAmount = currentHealth / maxHealth;
@@ -273,6 +288,34 @@ public class PlayerController : MonoBehaviour, IDamageable
     void SendNotification(string message, RpcTarget target)
     {
         PV.RPC("RPC_SendNotification", target, message);
+    }
+
+    [PunRPC]
+    void RPC_PlayerDied(string message, string killed, string killer)
+    {
+        if (!PV.IsMine)
+            return;
+
+        string _message = message;
+        string _killed = killed;
+        string _killer = killer;
+
+        if (killed.Equals(PV.Owner.NickName))
+        {
+            _killed = "You";
+            _message = _message.Replace("was", "were");
+        }
+        if (killer.Equals(PV.Owner.NickName))
+        {
+            _killer = "You";
+        }
+
+        notificationManager.SendNotification(message.Replace("<KILLED>", _killed).Replace("<KILLER>", _killer));
+    }
+
+    void PlayerDied(string message, string killed, string killer)
+    {
+        PV.RPC("RPC_PlayerDied", RpcTarget.All, message, killed, killer);
     }
 
 }
