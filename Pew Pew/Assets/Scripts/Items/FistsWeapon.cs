@@ -37,7 +37,6 @@ public class FistsWeapon : Item
         MeleeInfo meleeInfo = (MeleeInfo)itemInfo;
 
         animator.Play("Punch");
-        
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
         RaycastHit hit;
@@ -51,11 +50,17 @@ public class FistsWeapon : Item
 
                 string hitNickName = hitView.Owner.NickName;
 
+                Vector3 _position = hit.collider.gameObject.transform.root.position;
+                Quaternion _rotation = hit.collider.gameObject.transform.rotation;
+
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(meleeInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
                     playerController.playerManager.AddKill();
+                    DropManager.Instance.DropHealthpack(_position, _rotation);
                 }
+
+                playerController.HitOther();
             }
 
         }

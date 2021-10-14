@@ -31,8 +31,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     [Header("Health")]
     public const float maxHealth = 100f;
-    public const float hitCache = 5f;
-    private float currentHealth = maxHealth;
+    public float hitCache = 5f;
+    public float currentHealth = maxHealth;
 
     [Header("UI")]
     [SerializeField] GameObject ui;
@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] GameObject deathUI;
     [SerializeField] TMP_Text deathMessage;
     [SerializeField] GameObject scoreboard;
+    [SerializeField] GameObject crosshair1;
+    [SerializeField] GameObject crosshair2;
+    [SerializeField] int crosshairHitTime;
 
     [Header("Other")]
     [SerializeField] ItemManager itemManager;
@@ -51,6 +54,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     PhotonView PV;
     string lastHitUser;
     float lastHitTime;
+
+    float redCrosshairExpireTime;
 
     [HideInInspector] public bool isPaused;
 
@@ -78,7 +83,8 @@ public class PlayerController : MonoBehaviour, IDamageable
             Destroy(GetComponent<GameSettingsLink>());
             Destroy(notificationManager);
             Destroy(damageEffectController);
-            //Destroy(playerManager.settings);
+            Destroy(GetComponent<DropManager>());
+            
             return;
         }
         Cursor.lockState = CursorLockMode.Locked;
@@ -92,13 +98,19 @@ public class PlayerController : MonoBehaviour, IDamageable
             return;
         }
 
-        /*if (Input.GetKey(KeyCode.Tab))
+        if (Input.GetKey(KeyCode.Tab))
         {
             scoreboard.SetActive(true);
         } else if (scoreboard.activeSelf)
         {
             scoreboard.SetActive(false);
-        }*/
+        }
+
+        if (crosshair2.activeSelf && Time.time > redCrosshairExpireTime)
+        {
+            crosshair1.SetActive(true);
+            crosshair2.SetActive(false);
+        }
 
         if (damageEffectController.damageEffect == DamageEffectController.DAMAGE_EFFECT_PULSE && currentHealth > 0.3 * maxHealth)
         {
@@ -139,6 +151,8 @@ public class PlayerController : MonoBehaviour, IDamageable
                 Die("The Void");
             }
         }
+
+        DisplayInteractable();
     }
 
     public void Look()
@@ -182,6 +196,18 @@ public class PlayerController : MonoBehaviour, IDamageable
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void DisplayInteractable()
+    {
+        // Find & display a text billboard if the player is looking at an interactable object
+    }
+
+    public void HitOther()
+    {
+        redCrosshairExpireTime = Time.time + crosshairHitTime;
+        crosshair2.SetActive(true);
+        crosshair1.SetActive(false);
     }
 
     /*

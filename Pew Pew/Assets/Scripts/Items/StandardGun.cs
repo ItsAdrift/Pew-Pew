@@ -45,24 +45,33 @@ public class StandardGun : Gun
         {
             if (hit.collider.gameObject.GetComponentInParent<IDamageable>() != null)
             {
+                float _damage = gunInfo.damage;
+                if (hit.collider.name.Equals("HeadShot"))
+                {
+                    _damage = _damage * 1.25f;
+                }
                 PhotonView hitView = hit.collider.gameObject.GetComponentInParent<PhotonView>();
                 if (hitView.IsMine)
                     return;
 
                 string hitNickName = hitView.Owner.NickName;
 
+                Vector3 _position = hit.collider.gameObject.transform.root.position;
+                Quaternion _rotation = hit.collider.gameObject.transform.rotation;
+
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
-                Debug.Log("Is Dead: " + isDead);
                 if (isDead)
                 {
-                    Debug.Log("Adding Kill For: " + PV.Owner.NickName);
                     playerController.playerManager.AddKill();
+                    DropManager.Instance.DropHealthpack(_position, _rotation);
                     // Moved to PlayerManager
 
                     //string message = hitNickName + " was killed by " + PV.Owner.NickName;
                     //notificationManager.SendDelayedGlobalNotification(message, false, 0.1f);
                     //notificationManager.SendNotification("You killed " + hitNickName);
                 }
+
+                playerController.HitOther();
             }
            
 

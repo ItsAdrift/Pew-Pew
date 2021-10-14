@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Fists
   itemDescription: No Gun? No Problem.
-  attackRate: 3
+  attackRate: 5
   damage: 5
   range: 7

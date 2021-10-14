@@ -31,7 +31,6 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) {
-        Debug.Log("Updating for " + target.NickName);
         Scoreboard scoreboard;
         scoreboardItems.TryGetValue(target.NickName, out scoreboard);
 
