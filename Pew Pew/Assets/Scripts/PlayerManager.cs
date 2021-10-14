@@ -71,6 +71,14 @@ public class PlayerManager : MonoBehaviour
 
     public void AddKill()
     {
+        StartCoroutine(AddKillDelay());
+        
+    }
+
+    IEnumerator AddKillDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+
         kills++;
         Hashtable hash = new Hashtable();
         hash.Add("kills", kills);

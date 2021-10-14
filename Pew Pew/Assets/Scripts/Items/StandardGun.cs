@@ -59,7 +59,7 @@ public class StandardGun : Gun
                 Vector3 _position = hit.collider.gameObject.transform.root.position;
                 Quaternion _rotation = hit.collider.gameObject.transform.rotation;
 
-                bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(gunInfo.damage, PV.Owner.NickName);
+                bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(_damage, PV.Owner.NickName);
                 if (isDead)
                 {
                     playerController.playerManager.AddKill();

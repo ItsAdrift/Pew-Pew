@@ -49,9 +49,10 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] MenuManager menuManager;
     [SerializeField] NotificationManager notificationManager;
     [SerializeField] Transform itemHolder;
+    [SerializeField] Transform secondaryItemHolder;
     [SerializeField] DamageEffectController damageEffectController;
 
-    PhotonView PV;
+    [HideInInspector] public PhotonView PV;
     string lastHitUser;
     float lastHitTime;
 
@@ -84,7 +85,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             Destroy(notificationManager);
             Destroy(damageEffectController);
             Destroy(GetComponent<DropManager>());
-            
+            itemHolder.position = secondaryItemHolder.position;
             return;
         }
         Cursor.lockState = CursorLockMode.Locked;
@@ -201,6 +202,26 @@ public class PlayerController : MonoBehaviour, IDamageable
     public void DisplayInteractable()
     {
         // Find & display a text billboard if the player is looking at an interactable object
+        Ray ray = GetComponentInChildren<Camera>().ViewportPointToRay(new Vector3(0.5f, 0.5f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 10))
+        {
+            if (hit.collider.gameObject.GetComponentInParent<Interactable>() != null)
+            {
+                Interactable interactable = hit.collider.gameObject.GetComponentInParent<Interactable>();
+                interactable.text.gameObject.SetActive(true);
+                DropManager.Instance.lookingAtDrop = true;
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    interactable.Use(this);
+                }
+
+                return;
+            }
+        }
+
+        DropManager.Instance.lookingAtDrop = false;
     }
 
     public void HitOther()
@@ -259,6 +280,12 @@ public class PlayerController : MonoBehaviour, IDamageable
             damageEffectController.Clear();
             Die(damager);
         } 
+    }
+
+    public void SetHealth(float health)
+    {
+        currentHealth = health;
+        healthBarImage.fillAmount = currentHealth / maxHealth;
     }
 
     public void Die(string damager)

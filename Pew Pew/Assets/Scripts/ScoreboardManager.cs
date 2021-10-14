@@ -15,7 +15,7 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
 
     Dictionary<string, Scoreboard> scoreboardItems = new Dictionary<string, Scoreboard>();
 
-    public void Awake()
+    public void Start()
     {
         Instance = this;
 
@@ -26,13 +26,22 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
             scoreboard.kills.text = "0";
             scoreboard.deaths.text = "0";
 
-            scoreboardItems.Add(player.NickName, scoreboard);
+            if (!scoreboardItems.ContainsKey(player.NickName))
+            {
+                scoreboardItems.Add(player.NickName, scoreboard);
+            }  
         }
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) {
         Scoreboard scoreboard;
         scoreboardItems.TryGetValue(target.NickName, out scoreboard);
+
+        /*if (scoreboard == null)
+        {
+            scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
+        }*/
+        
 
         scoreboard.username.text = target.NickName;
         if (changedProps.ContainsKey("kills"))
@@ -60,6 +69,11 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
         scoreboardItems.Add(newPlayer.UserId, scoreboard);
 
         OrderScoreboard();
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        scoreboardItems.Remove(otherPlayer.NickName);
     }
 
     public void OrderScoreboard()
