@@ -12,7 +12,13 @@ public abstract class Interactable : MonoBehaviour
 
     void Update()
     {
-        
+        if (!DropManager.Instance.lookingAtDrop)
+        {
+            text.gameObject.SetActive(false);
+        } else
+        {
+            text.gameObject.SetActive(true);
+        }
     }
 
 }
