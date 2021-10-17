@@ -71,6 +71,24 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
         OrderScoreboard();
     }
 
+    public void UpdateScoreboard()
+    {
+        Dictionary<string, Scoreboard> dataCopy = scoreboardItems;
+
+        foreach (Scoreboard s in scoreboardItems.Values.ToList())
+        {
+            Destroy(s.gameObject);
+        }
+
+        foreach(Scoreboard s in dataCopy.Values.ToList())
+        {
+            Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
+            scoreboard.username.text = s.username.text;
+            scoreboard.kills.text = s.kills.text;
+            scoreboard.deaths.text = s.deaths.text;
+        }
+    }
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         scoreboardItems.Remove(otherPlayer.NickName);

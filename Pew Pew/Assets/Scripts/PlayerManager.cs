@@ -44,8 +44,12 @@ public class PlayerManager : MonoBehaviour
 
     public void Die(string damager)
     {
+        ScoreboardManager scoreboard = ScoreboardManager.Instance;
+
         PhotonNetwork.Destroy(controller);
         CreateController();
+
+        
 
         // Display the death message to the new controller & set their settings again
         PlayerController newController = controller.GetComponent<PlayerController>();
@@ -61,6 +65,9 @@ public class PlayerManager : MonoBehaviour
         {
             NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> was killed by <KILLER>", PV.Owner.NickName, damager);
         }
+
+        ScoreboardManager.Instance = scoreboard;
+        ScoreboardManager.Instance.UpdateScoreboard();
 
         deaths++;
         Hashtable hash = new Hashtable();

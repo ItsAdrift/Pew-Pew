@@ -12,6 +12,8 @@ public class HealthPack : Interactable
     void Awake()
     {
         text.gameObject.SetActive(false);
+
+        Physics.IgnoreLayerCollision(0, 9);
     }
 
     public override string GetName()

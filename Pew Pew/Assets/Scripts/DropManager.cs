@@ -13,7 +13,7 @@ public class DropManager : MonoBehaviour
 
     public List<Interactable> droppedItems = new List<Interactable>();
 
-    public bool lookingAtDrop = false;
+    public Interactable lookingAtDrop;
 
     void Awake()
     {
@@ -24,7 +24,7 @@ public class DropManager : MonoBehaviour
     {
         droppedItems.RemoveAll(item => item == null);
 
-        if (!lookingAtDrop)
+        if (lookingAtDrop == null)
         {
             foreach (Interactable i in droppedItems)
             {

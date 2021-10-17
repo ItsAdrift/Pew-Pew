@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 7886737161444768509}
   - component: {fileID: 410823847071833222}
   - component: {fileID: 7362177523320118150}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 8325338762882327899}
   - component: {fileID: 2221805430423786288}
   - component: {fileID: 5736517456092958318}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -538,7 +538,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5380842197994345651}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.28, y: 1, z: 1.41}

@@ -288,7 +288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 67318200751577045}
   droppedItems: []
-  lookingAtDrop: 0
+  lookingAtDrop: {fileID: 0}
 --- !u!1 &67318201031115233
 GameObject:
   m_ObjectHideFlags: 0

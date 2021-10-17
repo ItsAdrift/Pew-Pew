@@ -210,7 +210,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             {
                 Interactable interactable = hit.collider.gameObject.GetComponentInParent<Interactable>();
                 interactable.text.gameObject.SetActive(true);
-                DropManager.Instance.lookingAtDrop = true;
+                DropManager.Instance.lookingAtDrop = interactable;
 
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -221,7 +221,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             }
         }
 
-        DropManager.Instance.lookingAtDrop = false;
+        DropManager.Instance.lookingAtDrop = null;
     }
 
     public void HitOther()
@@ -284,9 +284,16 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void SetHealth(float health)
     {
+        PV.RPC("RPC_SetHealth", RpcTarget.All, health);
+    }
+
+    [PunRPC]
+    void RPC_SetHealth(float health)
+    {
         currentHealth = health;
         healthBarImage.fillAmount = currentHealth / maxHealth;
     }
+
 
     public void Die(string damager)
     {
