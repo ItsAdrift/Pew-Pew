@@ -5,103 +5,109 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Utilities;
 
 public class ScoreboardManager : MonoBehaviourPunCallbacks
 {
     [HideInInspector] public static ScoreboardManager Instance;
 
-    [SerializeField] GameObject scoreboardPrefab;
-    [SerializeField] Transform holder;
-
-    Dictionary<string, Scoreboard> scoreboardItems = new Dictionary<string, Scoreboard>();
-
-    public void Start()
+    void Start()
     {
         Instance = this;
-
-        foreach (Player player in PhotonNetwork.PlayerList)
-        {
-            Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
-            scoreboard.username.text = player.NickName;
-            scoreboard.kills.text = "0";
-            scoreboard.deaths.text = "0";
-
-            if (!scoreboardItems.ContainsKey(player.NickName))
-            {
-                scoreboardItems.Add(player.NickName, scoreboard);
-            }  
-        }
     }
 
-    public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps) {
-        Scoreboard scoreboard;
-        scoreboardItems.TryGetValue(target.NickName, out scoreboard);
+    private List<ScoreboardEntry> entries = new List<ScoreboardEntry>();
 
-        /*if (scoreboard == null)
-        {
-            scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
-        }*/
-        
+    [SerializeField] private ScoreboardEntry entryPrefab = null;
+    [SerializeField] private Transform holder;
+    [SerializeField] private GameObject displayPanel;
 
-        scoreboard.username.text = target.NickName;
-        if (changedProps.ContainsKey("kills"))
-        {
-            scoreboard.kills.text = "" + (int)changedProps["kills"];
-        }
-        if (changedProps.ContainsKey("deaths"))
-        {
-            scoreboard.deaths.text = "" + (int)changedProps["deaths"];
-        }
 
-        scoreboardItems.Remove(target.NickName);
-        scoreboardItems.Add(target.NickName, scoreboard);
-
-        OrderScoreboard();
+    //creates and entry for local player and udpates the board
+    public override void OnJoinedRoom()
+    {
+        CreateNewEntry(PhotonNetwork.LocalPlayer);
+        UpdateScoreboard();
     }
 
+    //creates entry foreach new player and updates the board
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
-        scoreboard.username.text = newPlayer.NickName;
-        scoreboard.kills.text = "0";
-        scoreboard.deaths.text = "0";
-
-        scoreboardItems.Add(newPlayer.UserId, scoreboard);
-
-        OrderScoreboard();
+        CreateNewEntry(newPlayer);
+        UpdateScoreboard();
     }
 
-    public void UpdateScoreboard()
+    //removes entry from player that left the room and updates the board
+    public override void OnPlayerLeftRoom(Player targetPlayer)
     {
-        Dictionary<string, Scoreboard> dataCopy = scoreboardItems;
+        RemoveEntry(targetPlayer);
 
-        foreach (Scoreboard s in scoreboardItems.Values.ToList())
-        {
-            Destroy(s.gameObject);
-        }
+        UpdateScoreboard();
+    }
 
-        foreach(Scoreboard s in dataCopy.Values.ToList())
+    //using this callback to update the scoreboard only if the score property changed
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey(PlayerProperties.Kills) || changedProps.ContainsKey(PlayerProperties.Deaths))
         {
-            Scoreboard scoreboard = Instantiate(scoreboardPrefab, holder).GetComponent<Scoreboard>();
-            scoreboard.username.text = s.username.text;
-            scoreboard.kills.text = s.kills.text;
-            scoreboard.deaths.text = s.deaths.text;
+            UpdateScoreboard();
         }
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer)
+    private ScoreboardEntry CreateNewEntry(Player newPlayer)
     {
-        scoreboardItems.Remove(otherPlayer.NickName);
+        var newEntry = Instantiate(entryPrefab, holder, false);
+        newEntry.Set(newPlayer);
+        entries.Add(newEntry);
+        return newEntry;
     }
 
-    public void OrderScoreboard()
+    private void UpdateScoreboard()
     {
-        List<Scoreboard> orderedList = scoreboardItems.Values.ToList().OrderByDescending(o => int.Parse(o.kills.text)).ToList();
-        
-        for (int i = 0; i < orderedList.Count; i++)
+        //iterate through all player to update score
+        //if no entry exists create one
+        foreach (var targetPlayer in PhotonNetwork.CurrentRoom.Players.Values)
         {
-            orderedList[i].gameObject.transform.SetSiblingIndex(i);
+            var targetEntry = entries.Find(x => x.Player == targetPlayer);
+
+            if (targetEntry == null)
+            {
+                targetEntry = CreateNewEntry(targetPlayer);
+            }
+
+            targetEntry.UpdateScore();
         }
+
+        SortEntries();
+    }
+
+    private void SortEntries()
+    {
+        //sort entries in list
+        entries.Sort((a, b) => b.Kills.CompareTo(a.Kills));
+
+        //sort child order
+        for (var i = 0; i < entries.Count; i++)
+        {
+            entries[i].transform.SetSiblingIndex(i);
+        }
+    }
+
+    private void RemoveEntry(Player targetPlayer)
+    {
+        var targetEntry = entries.Find(x => x.Player == targetPlayer);
+        entries.Remove(targetEntry);
+        Destroy(targetEntry.gameObject);
+    }
+
+    public void SetOpen(bool open)
+    {
+        displayPanel.SetActive(open);
+    }
+    
+    public bool IsOpen()
+    {
+        return displayPanel.activeSelf;
     }
 
 }

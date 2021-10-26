@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Utilities;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -35,11 +36,11 @@ public class PlayerManager : MonoBehaviour
         Transform spawnPoint = SpawnManager.Instance.GetSpawnPoint();
         controller = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerController"), spawnPoint.position, spawnPoint.rotation, 0, new object[] { PV.ViewID });
 
-        Hashtable hash = new Hashtable();
+        /*Hashtable hash = new Hashtable();
         hash.Add("deaths", 0);
         hash.Add("kills", 0);
 
-        PV.Owner.SetCustomProperties(hash);
+        PV.Owner.SetCustomProperties(hash);*/
     }
 
     public void Die(string damager)
@@ -66,30 +67,11 @@ public class PlayerManager : MonoBehaviour
             NotificationManager.Instance.SendPlayerDiedMessage("<KILLED> was killed by <KILLER>", PV.Owner.NickName, damager);
         }
 
-        ScoreboardManager.Instance = scoreboard;
-        ScoreboardManager.Instance.UpdateScoreboard();
-
-        deaths++;
-        Hashtable hash = new Hashtable();
-        hash.Add("deaths", deaths);
-        hash.Add("kills", kills);
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        PhotonNetwork.LocalPlayer.AddDeaths(1);
     }
 
     public void AddKill()
     {
-        StartCoroutine(AddKillDelay());
-        
-    }
-
-    IEnumerator AddKillDelay()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        kills++;
-        Hashtable hash = new Hashtable();
-        hash.Add("kills", kills);
-        hash.Add("deaths", deaths);
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        PhotonNetwork.LocalPlayer.AddKills(1);
     }
 }

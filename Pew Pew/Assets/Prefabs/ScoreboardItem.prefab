@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 545, y: 0}
+  m_AnchoredPosition: {x: 557.2, y: 0}
   m_SizeDelta: {x: 389.9213, y: 64.4}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4255778560815557212
@@ -168,7 +168,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 128.0315, y: -2.2738}
+  m_AnchoredPosition: {x: 128.0315, y: -2.2738037}
   m_SizeDelta: {x: 579.7321, y: 64.4}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4731870118857259234
@@ -320,8 +320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   username: {fileID: 8017286393263040914}
-  kills: {fileID: 3079878306125366958}
-  deaths: {fileID: 5042382288786092375}
+  killsText: {fileID: 3079878306125366958}
+  deathsText: {fileID: 5042382288786092375}
 --- !u!1 &6653798030931036972
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +356,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -31, y: 0}
+  m_AnchoredPosition: {x: -17.96, y: 0}
   m_SizeDelta: {x: 389.9213, y: 64.4}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &130874256347321320

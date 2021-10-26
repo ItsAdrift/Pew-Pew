@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] Image healthBarImage;
     [SerializeField] GameObject deathUI;
     [SerializeField] TMP_Text deathMessage;
-    [SerializeField] GameObject scoreboard;
     [SerializeField] GameObject crosshair1;
     [SerializeField] GameObject crosshair2;
     [SerializeField] int crosshairHitTime;
@@ -101,10 +100,10 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         if (Input.GetKey(KeyCode.Tab))
         {
-            scoreboard.SetActive(true);
-        } else if (scoreboard.activeSelf)
+            ScoreboardManager.Instance.SetOpen(true);
+        } else if (ScoreboardManager.Instance.IsOpen())
         {
-            scoreboard.SetActive(false);
+            ScoreboardManager.Instance.SetOpen(false);
         }
 
         if (crosshair2.activeSelf && Time.time > redCrosshairExpireTime)
@@ -133,6 +132,9 @@ public class PlayerController : MonoBehaviour, IDamageable
             }
             
         }
+
+        Jump(); // This makes sure that the player will fall when paused instead of hanging stuck in the air however the jumping functionality is still disabled when paused.
+
         if (isPaused)
         {
             return;
@@ -140,7 +142,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         Look();
         Move();
-        Jump();
+        
 
         if (transform.position.y <= -10f) // Fell into the void
         {
@@ -189,7 +191,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void Jump()
     {
-        if (Input.GetButton("Jump") && isGrounded)
+        if (Input.GetButton("Jump") && isGrounded && !isPaused)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
