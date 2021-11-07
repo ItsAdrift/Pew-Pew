@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ee940ead8d4b10409387e5060acc7b8, type: 3}
+  m_Name: Team Death Match
+  m_EditorClassIdentifier: 
+  gamemodeName: Team Death Match
+  gamemodeID: tdm
+  gamemodeDescription: 2 Teams, first to 1000 points.
+  gamemodeBaseSceneIndex: 2

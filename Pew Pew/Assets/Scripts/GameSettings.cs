@@ -9,6 +9,11 @@ public class GameSettings : MonoBehaviour
 
     public static float volume = 0.5f;
 
+    public void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public static void UpdateSettings(float mouseSensitivity, float volume)
     {
         GameSettings.mouseSensitivity = mouseSensitivity;

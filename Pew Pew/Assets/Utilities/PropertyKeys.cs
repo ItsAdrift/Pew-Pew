@@ -5,5 +5,6 @@ namespace Utilities
     {
         public static string Kills = "kills";
         public static string Deaths = "deaths";
+        public static string Team = "teamIdx";
     }
 }

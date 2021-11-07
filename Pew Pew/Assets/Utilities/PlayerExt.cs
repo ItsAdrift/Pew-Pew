@@ -39,5 +39,25 @@ namespace Utilities
         }
 
         #endregion
+
+        #region Team
+        public static int GetTeam(this Player player)
+        {
+            return player.GetPropertyValue(PlayerProperties.Team, -1);
+        }
+
+        public static void SetTeam(this Player player, int teamIdx)
+        {
+            player.SetPropertyValue(PlayerProperties.Team, teamIdx);
+        }
+
+        // Checks if another player is friendly towards our local player
+        public static bool IsFriendly(this Player player)
+        {
+            var ownTeam = PhotonNetwork.LocalPlayer.GetTeam();
+            var targetTeam = player.GetTeam();
+            return ownTeam == targetTeam;
+        }
+        #endregion
     }
 }

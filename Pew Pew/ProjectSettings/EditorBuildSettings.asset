@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: f585dd9decf64534baa007ddcd350848
   - enabled: 1
-    path: Assets/Scenes/Base.unity
+    path: Assets/Game/FFA Base.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Game/Team Death Match Base.unity
+    guid: 26fda3e744903cb46be8ca36170cb6e9
   m_configObjects: {}

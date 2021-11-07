@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using System.IO;
+using Utilities;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager Instance;
+
+    private PhotonView PV;
 
     void Awake()
     {
@@ -18,6 +22,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         DontDestroyOnLoad(gameObject);
         Instance = this;
+
+        PV = GetComponent<PhotonView>();
     }
 
     public override void OnEnable()
@@ -34,8 +40,49 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if (scene.buildIndex == 1) { // We're in the game scene
+        if (scene.buildIndex == LevelIndex.FFA_BASE || scene.buildIndex == LevelIndex.TDM_BASE)
+        {
+            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("map", out object mapID);
+
+            Debug.Log((string)mapID);
+
+            Map map = MapController.Instance.FindMap((string)mapID);
+
+            GameObject mapObject = map.mapObject;
+            Vector3 mapPosition = new Vector3(0f, map.mapHeight, 0f);
+            Quaternion mapRotation = Quaternion.identity;
+
+            Instantiate(mapObject, mapPosition, mapRotation);
+
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
         }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        foreach (PhotonView pv in FindObjectsOfType<PhotonView>())
+        {
+            if (pv.Owner.UserId == otherPlayer.UserId)
+            {
+                Destroy(pv.transform.root.gameObject);
+            }
+        }
+    }
+
+    // 0 = Red, 1 = Blue
+    public void ClickedJoinTeamButton(int team)
+    {
+        PhotonNetwork.LocalPlayer.SetTeam(team);
+        PlayerListManager.Instance.UpdatePlayerList();
+
+        PV.RPC("RPC_UpdatePlayerList", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void RPC_UpdatePlayerList()
+    {
+        if (PV.IsMine)
+            return;
+        PlayerListManager.Instance.UpdatePlayerList();
     }
 }

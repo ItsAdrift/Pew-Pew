@@ -5,6 +5,7 @@ using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using Utilities;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -20,6 +21,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] GameObject playerListItemPrefab;
 
     [SerializeField] GameObject startGameButton;
+    [SerializeField] GameObject masterOnly;
 
     void Awake()
     {
@@ -75,24 +77,20 @@ public class Launcher : MonoBehaviourPunCallbacks
         MenuManager.instance.OpenMenu("room");
         roomNameText.text = PhotonNetwork.CurrentRoom.Name;
 
-        foreach(Transform child in playerListContent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // Display all of the players already in the lobby to this client. New players that join are handled in #OnPlayerEnteredRoom
-        Player[] players = PhotonNetwork.PlayerList;
-        for (int i = 0; i < players.Length; i++)
-        {
-            Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().Setup(players[i]);
-        }
+        PlayerListManager.Instance.UpdatePlayerList();
 
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
+        masterOnly.SetActive(PhotonNetwork.IsMasterClient);
+
+        MapController.Instance.UpdateMapDisplay(MapController.Instance.GetSelectedMap());
+        GamemodeController.Instance.UpdateGamemodeDisplay(GamemodeController.Instance.GetSelectedGamemode());
+
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
          startGameButton.SetActive(PhotonNetwork.IsMasterClient);
+         masterOnly.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -105,7 +103,7 @@ public class Launcher : MonoBehaviourPunCallbacks
      */
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(1);
+        PhotonNetwork.LoadLevel(GamemodeController.Instance.GetSelectedGamemode().gamemodeBaseSceneIndex);
     }
 
     public void LeaveRoom()
