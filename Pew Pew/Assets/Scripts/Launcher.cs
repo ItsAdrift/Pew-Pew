@@ -85,6 +85,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         MapController.Instance.UpdateMapDisplay(MapController.Instance.GetSelectedMap());
         GamemodeController.Instance.UpdateGamemodeDisplay(GamemodeController.Instance.GetSelectedGamemode());
 
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gamemode"] == "tdm")
+        {
+            PlayerListManager.Instance.ChangeGamemodeScreen(GamemodeController.Instance.FindGamemode("tdm"));
+            RoomManager.Instance.ClickedJoinTeamButton(Random.Range(0, 1));
+        }
+
+
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)

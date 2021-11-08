@@ -64,6 +64,7 @@ public class PlayerListManager : MonoBehaviour
             Player[] players = PhotonNetwork.PlayerList;
             for (int i = 0; i < players.Length; i++)
             {
+                Debug.Log(players[i].NickName + " Team: " + players[i].GetTeam());
                 if (players[i].GetTeam() == 0)
                 {
                     // Red
@@ -82,17 +83,47 @@ public class PlayerListManager : MonoBehaviour
 
     // TO DO: This needs to become an RPC so that the switch will happen across all clients.
     // OTHER TO DO: Why the heck do you have to click a team twice to join it? weird.
-    void OnGamemodeChange(Gamemode mode)
+    public void OnGamemodeChange(Gamemode mode)
     {
         if (mode.gamemodeID.Equals("ffa"))
         {
             freeForAll.SetActive(true);
 
             teamDeathMatch.SetActive(false);
+
+            UpdatePlayerList();
         } else if (mode.gamemodeID.Equals("tdm"))
         {
             teamDeathMatch.SetActive(true);
             freeForAll.SetActive(false);
+
+            RandomlyPlacePlayers();
+        }
+
+
+    }
+
+    public void ChangeGamemodeScreen(Gamemode mode) {
+        if (mode.gamemodeID.Equals("ffa"))
+        {
+            freeForAll.SetActive(true);
+
+            teamDeathMatch.SetActive(false);
+        }
+        else if (mode.gamemodeID.Equals("tdm"))
+        {
+            teamDeathMatch.SetActive(true);
+            freeForAll.SetActive(false);
+        }
+    }
+
+
+    public void RandomlyPlacePlayers()
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+        for (int i = 0; i < players.Length; i++)
+        {
+            players[i].SetTeam(Random.Range(0, 1));
         }
 
         UpdatePlayerList();

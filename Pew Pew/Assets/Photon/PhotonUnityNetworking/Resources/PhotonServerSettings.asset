@@ -49,6 +49,7 @@ MonoBehaviour:
   - RPC_RemoveHealthPack
   - RPC_SetHealth
   - RPC_UpdatePlayerList
+  - RPC_SwitchGamemode
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

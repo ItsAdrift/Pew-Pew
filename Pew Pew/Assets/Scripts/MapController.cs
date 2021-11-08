@@ -76,7 +76,6 @@ public class MapController : MonoBehaviourPunCallbacks
     {
         foreach(Map m in maps)
         {
-            Debug.Log(m.mapID);
             if (m.mapID.Equals(id))
             {
                 return m;

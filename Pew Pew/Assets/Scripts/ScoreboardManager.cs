@@ -22,6 +22,10 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform holder;
     [SerializeField] private GameObject displayPanel;
 
+    [Header("Team Death Match")]
+    [SerializeField] private ScoreboardEntry tdmEntryPrefab = null;
+    [SerializeField] private Transform redHolder;
+    [SerializeField] private Transform blueHolder;
 
     //creates and entry for local player and udpates the board
     public override void OnJoinedRoom()
@@ -56,10 +60,21 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
 
     private ScoreboardEntry CreateNewEntry(Player newPlayer)
     {
-        var newEntry = Instantiate(entryPrefab, holder, false);
-        newEntry.Set(newPlayer);
-        entries.Add(newEntry);
-        return newEntry;
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gamemode"] == "tdm")
+        {
+            var newEntry = Instantiate(tdmEntryPrefab, (newPlayer.GetTeam() == 0 ? redHolder : blueHolder), false);
+            newEntry.Set(newPlayer);
+            entries.Add(newEntry);
+            return newEntry;
+        }
+        else
+        {
+            var newEntry = Instantiate(entryPrefab, holder, false);
+            newEntry.Set(newPlayer);
+            entries.Add(newEntry);
+            return newEntry;
+        }
+        
     }
 
     private void UpdateScoreboard()

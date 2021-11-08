@@ -4,6 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
+using Photon.Realtime;
+using Utilities;
 
 public class PlayerController : MonoBehaviour, IDamageable
 {
@@ -50,6 +52,14 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] Transform itemHolder;
     [SerializeField] Transform secondaryItemHolder;
     [SerializeField] DamageEffectController damageEffectController;
+    [SerializeField] TMP_Text teamText;
+
+    [Header("Colours")]
+    [SerializeField] GameObject gfx;
+    [SerializeField] Material redMaterial;
+    [SerializeField] Material blueMaterial;
+    [SerializeField] Color32 redColor;
+    [SerializeField] Color32 blueColor;
 
     [HideInInspector] public PhotonView PV;
     string lastHitUser;
@@ -66,6 +76,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         playerManager = PhotonView.Find((int) PV.InstantiationData[0]).GetComponent<PlayerManager>();
         NotificationEvents.SendNotificiation += (string message, RpcTarget target) => { SendNotification(message, target); };
         NotificationEvents.PlayerDied += (string message, string killed, string killer) => { PlayerDied(message, killed, killer);  };
+
     }
 
     void OnDestroy()
@@ -76,6 +87,30 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     void Start()
     {
+        // For Team Death Match - change the player's colour, this needs to run whether it is a local player or another client.
+
+        if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gamemode"] == "tdm")
+        {
+            Player player = PV.Owner;
+            if (player.GetTeam() != -1)
+            {
+                int team = player.GetTeam();
+
+                if (team == 0)
+                { // Red
+                    gfx.GetComponent<Renderer>().material = redMaterial;
+                }
+                else if (team == 1)
+                { // Blue
+                    gfx.GetComponent<Renderer>().material = blueMaterial;
+                }
+            }
+        } else if ((string)PhotonNetwork.CurrentRoom.CustomProperties["gamemode"] == "ffa")
+        {
+            teamText.gameObject.SetActive(false);
+        }
+        
+
         if (!PV.IsMine)
         {
             Destroy(cameraHolder.GetComponentInChildren<Camera>().gameObject);
@@ -87,7 +122,26 @@ public class PlayerController : MonoBehaviour, IDamageable
             itemHolder.position = secondaryItemHolder.position;
             return;
         }
+
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (PhotonNetwork.LocalPlayer.GetTeam() != -1)
+        {
+            Debug.Log("T: " + PhotonNetwork.LocalPlayer.GetTeam());
+            int team = PhotonNetwork.LocalPlayer.GetTeam();
+
+            if (team == 0)
+            { // Red
+                teamText.text = "Red Team";
+                teamText.color = redColor;
+            }
+            else if (team == 1)
+            { // Blue
+                teamText.text = "Blue Team";
+                teamText.color = blueColor;
+            }
+        }
+
     }
 
     // Update is called once per frame
@@ -160,8 +214,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void Look()
     {
-        float mouseX = Input.GetAxis("Mouse X") * GameSettings.mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * GameSettings.mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X") * (CameraZoom.isZoomed ? GameSettings.zoomSensitivity : GameSettings.mouseSensitivity) * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * (CameraZoom.isZoomed ? GameSettings.zoomSensitivity : GameSettings.mouseSensitivity) * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);

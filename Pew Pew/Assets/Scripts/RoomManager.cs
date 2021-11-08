@@ -6,6 +6,7 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using System.IO;
 using Utilities;
+using ExitGames.Client.Photon;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
@@ -30,12 +31,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         base.OnEnable();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        GeneralEvents.GamemodeChange += (Gamemode newMode) => { OnGamemodeChange(newMode); };
     }
 
     public override void OnDisable()
     {
         base.OnDisable();
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        GeneralEvents.GamemodeChange -= OnGamemodeChange;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
@@ -43,8 +46,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (scene.buildIndex == LevelIndex.FFA_BASE || scene.buildIndex == LevelIndex.TDM_BASE)
         {
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("map", out object mapID);
-
-            Debug.Log((string)mapID);
 
             Map map = MapController.Instance.FindMap((string)mapID);
 
@@ -73,16 +74,35 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void ClickedJoinTeamButton(int team)
     {
         PhotonNetwork.LocalPlayer.SetTeam(team);
-        PlayerListManager.Instance.UpdatePlayerList();
+    }
 
-        PV.RPC("RPC_UpdatePlayerList", RpcTarget.All);
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (targetPlayer == PhotonNetwork.LocalPlayer)
+        {
+            if (changedProps.ContainsKey("teamIdx"))
+            {
+                PV.RPC("RPC_UpdatePlayerList", RpcTarget.Others);
+                PlayerListManager.Instance.UpdatePlayerList();
+            }
+            
+        }
     }
 
     [PunRPC]
     void RPC_UpdatePlayerList()
     {
-        if (PV.IsMine)
-            return;
         PlayerListManager.Instance.UpdatePlayerList();
+    }
+
+    public void OnGamemodeChange(Gamemode newMode)
+    {
+        PV.RPC("RPC_SwitchGamemode", RpcTarget.Others, newMode.gamemodeID);
+    }
+
+    [PunRPC]
+    void RPC_SwitchGamemode(string gamemodeID)
+    {
+        PlayerListManager.Instance.OnGamemodeChange(GamemodeController.Instance.FindGamemode(gamemodeID));
     }
 }

@@ -8,6 +8,7 @@ public class GameSettingsLink : MonoBehaviour
     bool updatingSliders = false;
 
     [SerializeField] Slider mouseSensitivitySlider;
+    [SerializeField] Slider zoomSensitivitySlider;
     [SerializeField] Slider volumeSlider;
 
     public void OnSliderUpdate()
@@ -15,13 +16,14 @@ public class GameSettingsLink : MonoBehaviour
         if (updatingSliders)
             return;
 
-        GameSettings.UpdateSettings(mouseSensitivitySlider.value, volumeSlider.value);
+        GameSettings.UpdateSettings(mouseSensitivitySlider.value, zoomSensitivitySlider.value, volumeSlider.value);
     }
 
     public void UpdateSliders()
     {
         updatingSliders = true;
         mouseSensitivitySlider.value = GameSettings.mouseSensitivity;
+        zoomSensitivitySlider.value = GameSettings.zoomSensitivity;
         volumeSlider.value = GameSettings.volume;
         updatingSliders = false;
     }
