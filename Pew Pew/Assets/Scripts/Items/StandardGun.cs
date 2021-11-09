@@ -46,8 +46,10 @@ public class StandardGun : Gun
             if (hit.collider.gameObject.GetComponentInParent<IDamageable>() != null)
             {
                 float _damage = gunInfo.damage;
+                bool isHeadshot = false;
                 if (hit.collider.name.Equals("HeadShot"))
                 {
+                    isHeadshot = true;
                     _damage = _damage * 1.25f;
                 }
                 PhotonView hitView = hit.collider.gameObject.GetComponentInParent<PhotonView>();
@@ -62,7 +64,7 @@ public class StandardGun : Gun
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(_damage, PV.Owner.NickName);
                 if (isDead)
                 {
-                    playerController.playerManager.AddKill();
+                    playerController.playerManager.AddKill(isHeadshot);
                     DropManager.Instance.DropHealthpack(_position, _rotation);
                     // Moved to PlayerManager
 

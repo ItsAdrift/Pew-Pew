@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utilities;
 
 public class PlayerListManager : MonoBehaviour
@@ -25,11 +26,22 @@ public class PlayerListManager : MonoBehaviour
         Instance = this;
 
         GeneralEvents.GamemodeChange += (Gamemode newMode) => { OnGamemodeChange(newMode); };
+
+        DontDestroyOnLoad(this);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDestroy()
     {
         GeneralEvents.GamemodeChange -= OnGamemodeChange;
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        if (scene.buildIndex != LevelIndex.LOBBY)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void UpdatePlayerList()
@@ -81,8 +93,6 @@ public class PlayerListManager : MonoBehaviour
         }
     }
 
-    // TO DO: This needs to become an RPC so that the switch will happen across all clients.
-    // OTHER TO DO: Why the heck do you have to click a team twice to join it? weird.
     public void OnGamemodeChange(Gamemode mode)
     {
         if (mode.gamemodeID.Equals("ffa"))

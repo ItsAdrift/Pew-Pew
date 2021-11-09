@@ -56,7 +56,7 @@ public class FistsWeapon : Item
                 bool isDead = hit.collider.gameObject.GetComponentInParent<IDamageable>().TakeDamage(meleeInfo.damage, PV.Owner.NickName);
                 if (isDead)
                 {
-                    playerController.playerManager.AddKill();
+                    playerController.playerManager.AddKill(false);
                     DropManager.Instance.DropHealthpack(_position, _rotation);
                 }
 

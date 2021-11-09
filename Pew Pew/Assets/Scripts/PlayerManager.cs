@@ -70,8 +70,16 @@ public class PlayerManager : MonoBehaviour
         PhotonNetwork.LocalPlayer.AddDeaths(1);
     }
 
-    public void AddKill()
+    public void AddKill(bool isHeadshot)
     {
         PhotonNetwork.LocalPlayer.AddKills(1);
+        if (PhotonNetwork.LocalPlayer.GetTeam() == 0) // Red
+        {
+            PhotonNetwork.CurrentRoom.AddTDMRedPoints(isHeadshot ? PhotonNetwork.CurrentRoom.GetTDMPointsKill() : PhotonNetwork.CurrentRoom.GetTDMPointsHeadshot());
+        } else if (PhotonNetwork.LocalPlayer.GetTeam() == 1) // Blue
+        {
+            PhotonNetwork.CurrentRoom.AddTDMBluePoints(isHeadshot ? PhotonNetwork.CurrentRoom.GetTDMPointsKill() : PhotonNetwork.CurrentRoom.GetTDMPointsHeadshot());
+        }
+        
     }
 }

@@ -123,6 +123,12 @@ public class PlayerController : MonoBehaviour, IDamageable
             return;
         }
 
+        Room r = PhotonNetwork.CurrentRoom;
+        Debug.Log("One Shot: " + r.GetOneShot());
+        Debug.Log("TDM Win: " + r.GetTDMPointsToWin());
+        Debug.Log("TDM Kill: " + r.GetTDMPointsKill());
+        Debug.Log("TDM Headshot: " + r.GetTDMPointsHeadshot());
+
         Cursor.lockState = CursorLockMode.Locked;
 
         if (PhotonNetwork.LocalPlayer.GetTeam() != -1)

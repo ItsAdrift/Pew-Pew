@@ -6,6 +6,8 @@ using Photon.Realtime;
 using System.Linq;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Utilities;
+using TMPro;
+using ExitGames.Client.Photon;
 
 public class ScoreboardManager : MonoBehaviourPunCallbacks
 {
@@ -26,6 +28,8 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
     [SerializeField] private ScoreboardEntry tdmEntryPrefab = null;
     [SerializeField] private Transform redHolder;
     [SerializeField] private Transform blueHolder;
+    [SerializeField] private TMP_Text redScore;
+    [SerializeField] private TMP_Text blueScore;
 
     //creates and entry for local player and udpates the board
     public override void OnJoinedRoom()
@@ -47,6 +51,18 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
         RemoveEntry(targetPlayer);
 
         UpdateScoreboard();
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable pr)
+    {
+        int pointsToWin = PhotonNetwork.CurrentRoom.GetTDMPointsToWin();
+
+        int redPoints = PhotonNetwork.CurrentRoom.GetTDMRedPoints();
+        int bluePoints = PhotonNetwork.CurrentRoom.GetTDMBluePoints();
+        redScore.text = "" + redPoints + "/" + pointsToWin;
+        blueScore.text = "" + bluePoints + "/" + pointsToWin;
+
+        // Check for a win
     }
 
     //using this callback to update the scoreboard only if the score property changed

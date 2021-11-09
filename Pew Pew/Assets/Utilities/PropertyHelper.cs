@@ -74,5 +74,75 @@ namespace Utilities
         }
 
         #endregion
+
+        #region Room
+
+        /// <summary>
+        /// Check Player Properties for a Property Value.
+        /// </summary>
+        /// <param name="room">Photon Room</param>
+        /// <param name="property">Property as string</param>
+        /// <param name="defaultValue">Fallback Value.</param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <returns>Property Value</returns>
+        public static T GetPropertyValue<T>(this Room room, string property, T defaultValue)
+        {
+            if (room.CustomProperties.TryGetValue(property, out var value))
+            {
+                return (T)value;
+            }
+
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Check Player Properties for a Property Value and set it.
+        /// </summary>
+        /// <param name="room">Photon Room</param>
+        /// <param name="property">Property as string</param>
+        /// <param name="value">Value to set.</param>
+        /// <typeparam name="T">Type</typeparam>
+        public static void SetPropertyValue<T>(this Room room, string property, T value)
+        {
+            var customProp = new Hashtable()
+            {
+                {property, value}
+            };
+            room.SetCustomProperties(customProp);
+        }
+
+        /// <summary>
+        /// Check Player Properties for a Property Value, add given value to it.
+        /// </summary>
+        /// <param name="room">Photon Room</param>
+        /// <param name="property">Property as string</param>
+        /// <param name="value">Value to set.</param>
+        public static void AddValueToProperty(this Room room, string property, int value)
+        {
+            var defaultValue = GetPropertyValue(room, property, 0);
+            defaultValue += value;
+
+            var scoreProp = new Hashtable()
+            {
+                {property, defaultValue}
+            };
+            room.SetCustomProperties(scoreProp);
+        }
+
+        /// <summary>
+        /// Deletes Property if DeleteNullProperties is set to true in Room Options.
+        /// </summary>
+        /// <param name="room">Photon Room</param>
+        /// <param name="property">Property as string</param>
+        public static void DeleteProperty(this Room room, string property)
+        {
+            var customProp = new Hashtable()
+            {
+                {property, null}
+            };
+            room.SetCustomProperties(customProp);
+        }
+
+        #endregion
     }
 }
