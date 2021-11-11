@@ -4,12 +4,14 @@ using UnityEngine;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Photon.Realtime;
+using Utilities;
 
 public class ItemManager : MonoBehaviourPunCallbacks
 {
     public Transform itemPosition;
 
     public List<Item> items = new List<Item>();
+    public Item oneShotGun;
 
     public Item selectedItem;
     public int selectedItemIndex = 0;
@@ -36,7 +38,7 @@ public class ItemManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (!PV.IsMine || playerController.isPaused)
+        if (!PV.IsMine || playerController.isPaused || ScoreboardManager.Instance.teamHasWon || PhotonNetwork.CurrentRoom.GetOneShot())
         {
             return;
         }

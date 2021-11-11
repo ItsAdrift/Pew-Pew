@@ -91,6 +91,15 @@ public class Launcher : MonoBehaviourPunCallbacks
             RoomManager.Instance.ClickedJoinTeamButton(Random.Range(0, 1));
         }
 
+        PhotonNetwork.LocalPlayer.SetDeaths(0);
+        PhotonNetwork.LocalPlayer.SetKills(0);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.SetTDMBluePoints(0);
+            PhotonNetwork.CurrentRoom.SetTDMRedPoints(0);
+        }
+
 
     }
 

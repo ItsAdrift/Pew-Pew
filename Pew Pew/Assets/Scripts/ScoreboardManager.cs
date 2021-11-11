@@ -13,6 +13,8 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
 {
     [HideInInspector] public static ScoreboardManager Instance;
 
+    public bool teamHasWon = false;
+
     void Start()
     {
         Instance = this;
@@ -30,6 +32,15 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform blueHolder;
     [SerializeField] private TMP_Text redScore;
     [SerializeField] private TMP_Text blueScore;
+
+    [Header("Team Death Match Win")]
+    [SerializeField] private GameObject winUI;
+    [SerializeField] private TMP_Text winnerDisplay;
+    [SerializeField] private TMP_Text redTeamScore;
+    [SerializeField] private TMP_Text blueTeamScore;
+    [SerializeField] private Color redColor;
+    [SerializeField] private Color blueColor;
+    
 
     //creates and entry for local player and udpates the board
     public override void OnJoinedRoom()
@@ -55,14 +66,46 @@ public class ScoreboardManager : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable pr)
     {
-        int pointsToWin = PhotonNetwork.CurrentRoom.GetTDMPointsToWin();
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            int pointsToWin = PhotonNetwork.CurrentRoom.GetTDMPointsToWin();
 
-        int redPoints = PhotonNetwork.CurrentRoom.GetTDMRedPoints();
-        int bluePoints = PhotonNetwork.CurrentRoom.GetTDMBluePoints();
-        redScore.text = "" + redPoints + "/" + pointsToWin;
-        blueScore.text = "" + bluePoints + "/" + pointsToWin;
+            int redPoints = PhotonNetwork.CurrentRoom.GetTDMRedPoints();
+            int bluePoints = PhotonNetwork.CurrentRoom.GetTDMBluePoints();
+            redScore.text = "" + redPoints + "/" + pointsToWin;
+            blueScore.text = "" + bluePoints + "/" + pointsToWin;
 
-        // Check for a win
+            // Check for a win
+            if (redPoints >= pointsToWin)
+            {
+                Win(0);
+            }
+            else if (bluePoints >= pointsToWin)
+            {
+                Win(1);
+            }
+        }
+        
+    }
+
+    public void Win(int team)
+    {
+        teamHasWon = true;
+        winUI.SetActive(true);
+        if (team == 0) // Red
+        {
+            winnerDisplay.text = "Red Team Won!";
+            winnerDisplay.color = redColor;
+        } else if (team == 1) // Red
+        {
+            winnerDisplay.text = "Blue Team Won!";
+            winnerDisplay.color = blueColor;
+        }
+
+        redTeamScore.text = "Red Team Score: " + redScore.text;
+        blueTeamScore.text = "Blue Team Score: " + blueScore.text;
+
+        Cursor.lockState = CursorLockMode.None;
     }
 
     //using this callback to update the scoreboard only if the score property changed

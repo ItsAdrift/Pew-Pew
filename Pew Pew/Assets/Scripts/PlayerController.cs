@@ -158,6 +158,12 @@ public class PlayerController : MonoBehaviour, IDamageable
             return;
         }
 
+        if (ScoreboardManager.Instance.teamHasWon)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            return;
+        }
+
         if (Input.GetKey(KeyCode.Tab))
         {
             ScoreboardManager.Instance.SetOpen(true);
